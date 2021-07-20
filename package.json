@@ -1,0 +1,15 @@
+{
+  "name": "scoreboard",
+  "version": "1.0.0",
+  "description": "Scoreboard For Paintball",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Martin Patrikov",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^13.1.6",
+    "jquery": "^3.6.0"
+  }
+}

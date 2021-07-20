@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Scoreboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- <script src = "main.js"></script> -->
+  </head>
+  <body>
+    <div id="top-part">
+      <div class="team-score">
+        <h1 class="title">TEAM A</h1>
+        <div class="result-container">
+          <div class="result first-team digits">00</div>
+          <div class="result-commands">
+            <button class="plus result result-button" id="first" value="+">+</button>
+            <button class="minus result result-button" id="first" value="-">-</button>
+          </div>
+        </div>
+        <div class="current-side">Left</div>
+      </div>
+
+      <div class="timer-section">
+        <div class="game-time">
+          <h1 class="title">Game Time</h1>
+          <div class="gametime-container">
+            <div class="minutes">
+              <button class="plus minutes time-button" value="+">+</button>
+              <div class="minutes first-half digits time" id="first-half-minutes">05</div>
+              <button class="minus minutes time-button" value="-">-</button>
+            </div>
+            <div class="digits two-dots">
+              <h1>:</h1>
+            </div>
+            <div class="seconds">
+              <button class="plus seconds time-button" value="+">+</button>
+              <div class="seconds first-half digits time" id="first-half-seconds">05</div>
+              <button class="minus seconds time-button" value="-">-</button>
+            </div>
+            <div class="gametime-buttons">
+              <button class="timer-buttons" onclick="startTimerTopHalf()">Start</button>
+              <button class="timer-buttons" onclick="stopClock()">Stop</button>
+              <button class="timer-buttons">Master Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="team-score">
+        <h1 class="title">TEAM B</h1>
+        <div class="result-container">
+          <div class="result second-team digits ">00</div>
+          <div class="result-commands">
+            <button class="plus result result-button" id="second" value="+">+</button>
+            <button class="minus result result-button" id="second" value="-">-</button>
+          </div>
+        </div>
+        <div class="current-side">Right</div>
+      </div>
+    </div>
+
+    <!-- Include JQuery for electron -->
+    <script>
+      window.$ = window.jQuery = require('jquery');
+    </script>
+
+    <script>
+      const electron = require('electron');
+      const {ipcRenderer} = electron;
+
+      // Variables need for result buttons
+      let firstTeam = document.querySelector(".first-team");
+      let secondTeam = document.querySelector(".second-team");
+      let firstTeamCounter = 0;
+      let secondTeamCounter = 0;
+       
+      // Functionality for result buttons 
+      $(".result-button").click(function() {
+          let firedButtonTeam = $(this).attr('id');
+          let firedButton = $(this).val();
+          if(firedButton === '-'){
+            if(firedButtonTeam === 'first'){
+              firstTeamCounter--;
+              if(firstTeamCounter < 10 && firstTeamCounter >= 0) {
+                firstTeam.innerHTML =  '0' + firstTeamCounter;
+              }else{
+                firstTeam.innerHTML = firstTeamCounter;
+              }
+            }else if(firedButtonTeam === 'second'){
+              secondTeamCounter--;
+              if(secondTeamCounter < 10 && secondTeamCounter >= 0) {
+                secondTeam.innerHTML =  '0' + secondTeamCounter;
+              }else{
+                secondTeam.innerHTML = secondTeamCounter;
+              }
+            }
+              
+              
+          }else{
+            if(firedButtonTeam === 'first'){
+              firstTeamCounter++;
+              if(firstTeamCounter < 10 && firstTeamCounter >= 0) {
+                firstTeam.innerHTML =  '0' + firstTeamCounter;
+              }else{
+                firstTeam.innerHTML = firstTeamCounter;
+              }
+            }else if(firedButtonTeam === 'second'){
+              secondTeamCounter++;
+              if(secondTeamCounter < 10 && secondTeamCounter >= 0) {
+                secondTeam.innerHTML =  '0' + secondTeamCounter;
+              }else{
+                secondTeam.innerHTML = secondTeamCounter;
+              }
+            }
+          }
+      });
+      
+      // Variables needed for GameTime for the top half
+      let stoptime = true;
+      let secondsInTimer = document.getElementById("first-half-seconds");
+      let minutesInTimer = document.getElementById("first-half-minutes");
+      let sec = document.getElementById("first-half-seconds").textContent || 0;
+      let min = document.getElementById("first-half-minutes").textContent || 0;
+
+      // Timer Function
+      function timerCycle(){
+        
+        if(stoptime == false){
+            sec = parseInt(sec);
+            min = parseInt(min);
+
+            sec--;
+            
+            if(sec <= 0){
+                min--;
+                sec = 59;
+            }
+            if(min <= 0){
+                stoptime = true;
+            }
+            if(min < 10){
+                min = '0' + min;
+            }
+            if(sec < 10){
+                sec = '0' + sec;
+            }
+            
+            secondsInTimer.innerHTML = sec;
+            minutesInTimer.innerHTML = min;
+            setTimeout("timerCycle()", 1000);
+        }
+      }
+      
+      // Game Time Button Functions
+      function startTimerTopHalf(){
+        if(stoptime == true){
+          stoptime = false;
+          timerCycle();
+        }
+      }
+
+      function stopClock(){
+        if(stoptime == false){
+            stoptime = true;
+        }
+      }
+    </script>
+  </body>
+</html>
